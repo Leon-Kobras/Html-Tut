@@ -22,7 +22,6 @@ def main():
     block = markdown_to_blocks(text)
     lock = markdown_to_html_node(text)
     hock = block_to_block_type("# This is a heading")
-    copier("public", "docs", 0)
     generate_pages_recursive("content", "template.html", "docs")
     basepath = "/"
     if sys.argv[0] != "":
