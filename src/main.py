@@ -1,5 +1,6 @@
 def main():
     import os
+    import sys
     from textnode import TextNode, TextType
     from htmlnode import HTMLNode, LeafNode
     from functions import split_nodes_delimiter, block_to_block_type, markdown_to_blocks, markdown_to_html_node
@@ -21,7 +22,10 @@ def main():
     block = markdown_to_blocks(text)
     lock = markdown_to_html_node(text)
     hock = block_to_block_type("# This is a heading")
-    copier("static", "public", 0)
-    generate_pages_recursive("content", "template.html", "public")
+    copier("public", "docs", 0)
+    generate_pages_recursive("content", "template.html", "docs")
+    basepath = "/"
+    if sys.argv[0] != "":
+        basepath = sys.argv[0]
 if __name__ == "__main__":
     main()

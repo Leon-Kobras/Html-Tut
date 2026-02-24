@@ -34,9 +34,9 @@ def extract_title(markdown):
             return bloc
     raise Exception("No headings found")
 
-def generate_page(from_path, template_path, dest_path):
-    print("Generating page from {from_path} to {dest_path} using {template_path}")
-    absfrom_path = os.path.abspath(from_path)
+def generate_page(basepath, template_path, dest_path):
+    print("Generating page from {basepath} to {dest_path} using {template_path}")
+    absfrom_path = os.path.abspath(basepath)
     abstemplate_path = os.path.abspath(template_path)
     f = open(absfrom_path)
     markdown = f.read()
@@ -47,6 +47,8 @@ def generate_page(from_path, template_path, dest_path):
     Title = extract_title(markdown)
     templated = template.replace("{{ Title }}", f"{Title}")
     templated = templated.replace("{{ Content }}", f"{content}")
+    templated = templated.replace('href="/', f'href="{basepath}')
+    templated = templated.replace('src="/', f'src="{basepath}')
     if os.path.exists(dest_path) == False:
         directories = os.path.dirname(dest_path)
         os.makedirs(directories, exist_ok=True)
@@ -56,15 +58,15 @@ def generate_page(from_path, template_path, dest_path):
         with open(dest_path, "w") as s:
             s.write(templated)
 
-def generate_pages_recursive(directory, template_path, dest_dir_path):
-    filesname = os.listdir(directory)
+def generate_pages_recursive(basepath, template_path, dest_dir_path):
+    filesname = os.listdir(basepath)
     for filename in filesname:
-        if os.path.isfile(os.path.join(directory, filename)) == True:
+        if os.path.isfile(os.path.join(basepath, filename)) == True:
             joined = os.path.join(dest_dir_path, filename)
             root, _ext = os.path.splitext(joined)
             if _ext == ".md":
                 new_path = root + ".html"
-                generate_page(os.path.join(directory, filename), template_path, new_path)
+                generate_page(os.path.join(basepath, filename), template_path, new_path)
         else:
-            generate_pages_recursive(os.path.join(directory, filename), template_path, os.path.join(dest_dir_path, filename))
+            generate_pages_recursive(os.path.join(basepath, filename), template_path, os.path.join(dest_dir_path, filename))
 
